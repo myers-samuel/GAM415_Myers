@@ -38,6 +38,20 @@ Amyersfirstperson415Projectile::Amyersfirstperson415Projectile()
 	InitialLifeSpan = 3.0f;
 }
 
+void Amyersfirstperson415Projectile::BeginPlay()
+{
+	Super::BeginPlay();
+	// Creates a random color
+	randColor = FLinearColor(UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), 1.f);
+
+	// Creates a dynamic material instance and sets ballMesh to that dynamic material
+	dmiMat = UMaterialInstanceDynamic::Create(projMat, this);
+	ballMesh->SetMaterial(0, dmiMat);
+
+	// Sets the color of the dynamic material to be randColor, which was created earlier
+	dmiMat->SetVectorParameterValue("ProjColor", randColor);
+}
+
 void Amyersfirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
@@ -50,12 +64,7 @@ void Amyersfirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor*
 
 	if (OtherActor != nullptr)
 	{
-		float ranNumX = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
-		float ranNumY = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
-		float ranNumZ = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
 		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f);
-
-		FVector4 randColor = FVector4(ranNumX, ranNumY, ranNumZ, 1.f);
 
 		auto Decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), baseMat, FVector(UKismetMathLibrary::RandomFloatInRange(20.f, 40.f)), Hit.Location, Hit.Normal.Rotation(), 0.f);
 		auto MatInstance = Decal->CreateDynamicMaterialInstance();
